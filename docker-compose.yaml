@@ -1,16 +1,18 @@
-version: '3'
+version: "3"
 
 services:
   app:
-    image: haroldcris/php7.4
+    build:
+      context: ./vm/php
+      dockerfile: Dockerfile
+    #    image: haroldcris/php7.4
     container_name: app
     restart: unless-stopped
     volumes:
-      - ./server/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-      - ./app:/var/www
+      - ./vm/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./src:/var/www
     networks:
       - mynetwork
-
 
   webserver:
     image: nginx
@@ -20,8 +22,8 @@ services:
       - 8000:80
       - 443:443
     volumes:
-      - ./server/nginx/conf.d:/etc/nginx/conf.d/
-      - ./app:/var/www
+      - ./vm/nginx/conf.d:/etc/nginx/conf.d/
+      - ./src:/var/www
     networks:
       - mynetwork
 
@@ -29,11 +31,11 @@ services:
     image: adminer
     container_name: myadminer
     restart: always
-    ports: 
+    ports:
       - 9000:8080
     networks:
       - mynetwork
-  
+
   db:
     image: mariadb
     container_name: mymariadb
@@ -44,11 +46,10 @@ services:
       SERVICE_NAME: mariadb
       TZ: Asia/Manila
     volumes:
-      - ./server/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./vm/mysql/my.cnf:/etc/mysql/my.cnf
       - ./db:/var/lib/mysql
     networks:
       - mynetwork
-  
 
 networks:
   mynetwork:
