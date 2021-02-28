@@ -10,7 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./vm/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-      - ./src:/var/www
+      - ./code:/var/www
 
 
   webserver:
@@ -22,7 +22,7 @@ services:
       # - 443:443
     volumes:
       - ./vm/nginx/conf.d:/etc/nginx/conf.d/
-      - ./src:/var/www
+      - ./code:/var/www
 
 
   adminer:
