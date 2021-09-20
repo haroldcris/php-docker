@@ -12,9 +12,9 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip  \
-    gnupg
-
+    unzip \
+    gnupg \
+    wget
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -25,22 +25,27 @@ RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd
 RUN pecl install redis-5.1.0
 
 
-
 ENV ACCEPT_EULA=Y
+
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/g/glibc/multiarch-support_2.27-3ubuntu1.2_amd64.deb \
+    && dpkg -i multiarch-support_2.27-3ubuntu1.2_amd64.deb \
+    && apt-get update
+
 
 # Microsoft SQL Server Prerequisites
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
     && apt-get install -y --no-install-recommends \
         apt-transport-https \
-    && apt-get update \
-    && apt-get -y --no-install-recommends install \
-        unixodbc-dev \
-        msodbcsql17
+    && apt-get update 
+
+RUN apt-get -y --no-install-recommends install \        
+        msodbcsql17 \
+        unixodbc-dev 
+
 
 RUN pecl install sqlsrv pdo_sqlsrv xdebug \
     && docker-php-ext-enable sqlsrv pdo_sqlsrv xdebug
-
 
 
 
