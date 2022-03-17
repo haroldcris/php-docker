@@ -6,7 +6,7 @@ services:
     #   context: ./vm/php
     #   dockerfile: Dockerfile
     image: haroldcris/php8.0:v1
-    container_name: ${APP_NAME}-php7
+    container_name: ${APP_NAME}-php8
     restart: unless-stopped
     volumes:
       - ./vm/php/local.ini:/usr/local/etc/php/conf.d/local.ini
@@ -16,7 +16,7 @@ services:
   webserver:
     image: nginx
     container_name: ${APP_NAME}-nginx
-    restart: always
+    restart: unless-stopped
     ports:
       - ${APP_PORT}:80
       # - 443:443
@@ -28,7 +28,7 @@ services:
   adminer:
     image: adminer:latest
     container_name: ${APP_NAME}-adminer
-    restart: always
+    restart: unless-stopped
     ports:
       - ${ADMINER_PORT}:8080
 
@@ -36,7 +36,7 @@ services:
   db:
     image: mariadb
     container_name: ${APP_NAME}-mariadb
-    restart: always
+    restart: unless-stopped
     environment:
       SERVICE_NAME: mariadb
       MYSQL_DATABASE: test
