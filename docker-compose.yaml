@@ -2,10 +2,10 @@ version: "3.5"
 
 services:
   app:
-    build:
-      context: ./vm/php
-      dockerfile: Dockerfile
-    image: haroldcris/php7.4
+    # build:
+    #   context: ./vm/php
+    #   dockerfile: Dockerfile
+    image: haroldcris/php8.0:v1
     container_name: ${APP_NAME}-php7
     restart: unless-stopped
     volumes:
