@@ -5,7 +5,7 @@ services:
     # build:
     #   context: ./vm/php
     #   dockerfile: Dockerfile
-    image: haroldcris/php8.0:latest
+    image: haroldcris/php8:latest
     container_name: ${APP_NAME}-php8
     restart: unless-stopped
     volumes:
