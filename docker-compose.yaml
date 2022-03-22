@@ -8,10 +8,12 @@ services:
     image: haroldcris/php8:latest
     container_name: ${APP_NAME}-php8
     restart: unless-stopped
+    depends_on:
+      - db
     volumes:
       - ./vm/php/local.ini:/usr/local/etc/php/conf.d/local.ini
       - ./code:/var/www
-
+    
 
   webserver:
     image: nginx
@@ -20,6 +22,8 @@ services:
     ports:
       - ${APP_PORT}:80
       # - 443:443
+    depends_on:
+      - app
     volumes:
       - ./vm/nginx/conf.d:/etc/nginx/conf.d/
       - ./code:/var/www
@@ -39,7 +43,6 @@ services:
     restart: unless-stopped
     environment:
       SERVICE_NAME: mariadb
-      MYSQL_DATABASE: test
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -48,3 +51,16 @@ services:
     volumes:
       - ./vm/mysql/my.cnf:/etc/mysql/my.cnf
       - ./db:/var/lib/mysql
+
+  ngrok:
+    image: wernight/ngrok:latest
+    container_name: ${APP_NAME}-ngrok
+    restart: unless-stopped    
+    ports:
+      - ${NGROK_PORT}:4040      
+    depends_on:
+      - webserver
+    environment:      
+      NGROK_PROTOCOL: http
+      NGROK_PORT: webserver
+      NGROK_AUTH: ${NGROK_TOKEN}        
