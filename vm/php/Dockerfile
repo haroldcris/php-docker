@@ -1,4 +1,10 @@
-FROM php:8.0-fpm
+#
+#   This is the code that is used to build the docker image haroldcris/php8:latest
+#
+#   It is not called in this repo, it is here for    from the php
+
+FROM php:fpm
+#FROM php:8.0-fpm
 
 # Arguments defined in docker-compose.yml
 #ARG user
@@ -22,26 +28,20 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd    
 
-# RUN pecl install redis
-
-
-
 ENV ACCEPT_EULA=Y
 
-# Microsoft SQL Server Prerequisites
-# RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-#     && curl https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-#     && apt-get install -y --no-install-recommends \
-#         apt-transport-https \
-#     && apt-get update \
-#     && apt-get -y --no-install-recommends install \
-#         unixodbc-dev \
-#         msodbcsql17
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get install -y --no-install-recommends \
+        apt-transport-https \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install \
+        unixodbc-dev \
+        msodbcsql17
 
-# RUN pecl install sqlsrv pdo_sqlsrv xdebug \
-#     && docker-php-ext-enable sqlsrv pdo_sqlsrv xdebug
-
-
+ RUN pecl install sqlsrv pdo_sqlsrv xdebug \
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv xdebug
+ 
 
 
 # Get latest Composer

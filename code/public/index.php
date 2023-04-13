@@ -1,3 +1,2 @@
 <?php
-
-    return phpinfo();
+    echo phpinfo();
