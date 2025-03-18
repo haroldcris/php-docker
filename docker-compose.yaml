@@ -17,8 +17,14 @@ services:
     restart: unless-stopped
     ports:
       - ${APP_PORT}:80
+      - 443:443
+    environment:
+      - FQDN=${DOMAIN_NAME}
+    depends_on:  
+      - certbot
     volumes:
-      - ./vm/nginx/conf.d:/etc/nginx/conf.d/
+      - ./vm/nginx/conf.d:/etc/nginx/templates:ro
+      - ./vm/certbot/etc:/etc/ssl:ro
       - ./code:/var/www
       
 
@@ -46,3 +52,30 @@ services:
     volumes:
       - ./vm/mysql/my.cnf:/etc/mysql/my.cnf
       - ./db:/var/lib/mysql
+
+
+  certbot:
+    image: certbot/dns-cloudflare
+    container_name: 'certbot'
+    volumes:
+      - ./vm/certbot/etc:/etc/letsencrypt
+      - ./vm/certbot/var:/var/lib/letsencrypt 
+      - ./cloudflare-api-key.ini:/etc/cloudflare-api-key.ini     
+    command: >       
+            certonly 
+              --agree-tos
+              --email "${CERTBOT_EMAIL}"
+              --dns-cloudflare
+              --dns-cloudflare-credentials "/etc/cloudflare-api-key.ini"
+              --keep-until-expiring
+              --expand              
+              -d ${DOMAIN_NAME} 
+
+    # command: > 
+    #         certonly --manual
+    #           --agree-tos 
+    #           --email "${CERTBOT_EMAIL}"
+    #           --preferred-challenges dns
+    #           --keep-until-expiring
+    #           --expand              
+    #           -d ${DOMAIN_NAME}
