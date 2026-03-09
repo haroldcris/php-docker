@@ -12,3 +12,9 @@ How to run:
 ```
 
 4. Write your php code inside code folder
+
+
+5. On your host machine, go to the project folder and run:
+```
+sudo chown -R 1000:1000
+```
